@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.home.dao.ManagerDao">
+
+
+    <resultMap id="BaseManager" type="com.home.entity.Manager">
+        <id property="managerId" column="manager_id" jdbcType="BIGINT"/>
+        <result property="managername" column="manager_name" jdbcType="VARCHAR"/>
+        <result property="managerpassword" column="manager_password" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <resultMap id="ManagerInFo" type="com.home.entity.ManagerInFo">
+        <result property="Managername" column="manager_name" jdbcType="VARCHAR"/>
+        <result property="avatar" column="avatar" jdbcType="VARCHAR"/>
+        <result property="introduction" column="introduction" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <resultMap id="BaseRole" type="com.home.entity.Role">
+        <result property="roleid" column="roles_id" jdbcType="BIGINT"/>
+        <result property="rolename" column="roles_name" jdbcType="VARCHAR"/>
+        <result property="roledecribe" column="roles_describe" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id ="ManagerLogin" resultMap="BaseManager">
+        SELECT manager_id,manager_name,manager_password
+        FROM manager
+        WHERE manager_id = #{Managerid}
+    </select>
+
+    <select id ="GetManagerInFo" resultMap="ManagerInFo">
+        SELECT manager_name,avatar,role_id,introduction
+        FROM manager
+        WHERE manager_id = #{Managerid}
+    </select>
+
+    <select id ="GetManagerRoles" resultType="String">
+        SELECT role_id
+        FROM role_manager
+        WHERE manager_id = #{Managerid}
+    </select>
+
+    <select id ="GetManagerRolesPlus" resultMap="BaseRole">
+        SELECT roles_id,roles_name,roles_describe From roles AS a
+        INNER JOIN role_manager as b
+        ON a.roles_id = b.role_id
+        WHERE b.manager_id = #{Managerid}
+    </select>
+
+    <select id ="ShwoRoles" resultMap="BaseRole">
+        SELECT *
+        FROM roles
+        WHERE roles_id = #{Roleid}
+    </select>
+
+    <select id ="GetAllManager" resultMap="BaseManager">
+        SELECT manager_id,manager_name
+        FROM manager
+    </select>
+
+    <select id ="GetAllRoles" resultMap="BaseRole">
+        SELECT *
+        FROM roles
+    </select>
+
+    <!--    <insert id="ManagerRegister" parameterType="com.home.entity.Manager">-->
+<!--    INSERT INTO manager(manager_id,manager_name,manager_password,manager_role)-->
+<!--    VALUE(#{managerId},#{managername},#{managerpassword},#{role})-->
+<!--    </insert>-->
+
+    <insert id="AddManager">
+        INSERT INTO manager
+        (manager_id,manager_name,manager_password,avatar,introduction)
+        VALUES
+        (#{managerId},#{managerName},#{managerPassword},#{avatar},#{introduction})
+    </insert>
+
+    <update id="ManagerPasswordUpdate">
+    UPDATE manager
+    SET manager_password = #{password}
+    WHERE manager_id = #{Managerid}
+    </update>
+
+    <update id="ChangeManagerInfo">
+    UPDATE manager
+    SET manager_name = #{managername} ,introduction = #{introduction}
+    WHERE manager_id = #{managerid}
+    </update>
+
+
+    <delete id="Deletmanager">
+    DELETE FROM
+    manager
+    WHERE manager_id = #{managerid}
+    </delete>
+
+    <delete id="DeletManagerRole">
+    DELETE FROM
+    role_manager
+    WHERE manager_id = #{managerid}
+    </delete>
+
+    <delete id="DeletManagerRoles">
+    DELETE FROM
+    role_manager
+    WHERE manager_id = #{managerId}
+    AND role_id = #{rolesid}
+    </delete>
+
+    <insert id="AddManagerRoles">
+    INSERT INTO role_manager
+    (manager_id,role_id)
+    VALUES(#{managerId},#{rolesid})
+    </insert>
+
+
+
+</mapper>

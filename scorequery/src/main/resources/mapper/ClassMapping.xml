@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.scorequery.dao.ClassDao">
+
+    <resultMap id="BaseClass" type="com.scorequery.entity.Class" >
+    <id property="classId" column="class_id" jdbcType="BIGINT"/>
+    <result property="className" column="class_name" jdbcType="VARCHAR"/>
+    <result property="teacherId" column="teacher_id" jdbcType="BIGINT"/>
+    <result property="facultyId" column="faculty_id" jdbcType="BIGINT"/>
+        <collection property="teacher" ofType="com.scorequery.entity.Teacher"
+                    select="com.scorequery.dao.TeacherDao.GetTeacherById" column="teacher_id">
+        </collection>
+        <collection property="faculty" ofType="com.scorequery.entity.Facultys"
+                    select="com.scorequery.dao.FacultysDao.GetFacultysById" column="faculty_id">
+        </collection>
+    </resultMap>
+
+    <select id ="GetAllClass" resultMap="BaseClass">
+        SELECT * FROM class
+    </select>
+
+    <select id ="GetClassByName" resultMap="BaseClass">
+        SELECT * FROM class WHERE class_name = #{classname}
+    </select>
+
+    <select id ="GetClassById" resultMap="BaseClass">
+        SELECT *
+        FROM class
+        WHERE class_id = #{classid}
+        AND faculty_id = #{facultyid}
+    </select>
+
+</mapper>

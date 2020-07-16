@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.scorequery.dao.AchievementFormDao">
+
+    <resultMap id="BaseAchievementForm" type="com.scorequery.entity.AchievementForm">
+        <result property="achievementDate" column="achievement_date" jdbcType="VARCHAR"/>
+        <result property="createrId" column="creater_id" jdbcType="BIGINT"/>
+        <result property="createrName" column="creater_name" jdbcType="VARCHAR"/>
+        <result property="formName" column="form_name" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id ="GetAchievementForm" resultMap="BaseAchievementForm">
+        SELECT *
+        FROM achievement_form
+    </select>
+
+    <select id ="GetAchievementFormName" resultType="String">
+        SELECT form_name
+        FROM achievement_form
+        WHERE semester = #{semester}
+    </select>
+
+    <select id ="GetAllSemester" resultType="String">
+        SELECT semester
+        FROM achievement_form
+    </select>
+
+    <select id ="GetAllFormName" resultType="String">
+        SELECT form_name
+        FROM achievement_form
+    </select>
+</mapper>

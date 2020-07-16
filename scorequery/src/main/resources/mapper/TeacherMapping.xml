@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.scorequery.dao.TeacherDao">
+
+    <resultMap id="BaseTeacher" type="com.scorequery.entity.Teacher" >
+        <id property="teacherId" column="teacher_id" jdbcType="BIGINT"/>
+        <result property="teacherName" column="teacher_name" jdbcType="VARCHAR"/>
+        <result property="teacherPhone" column="teacher_phone" jdbcType="VARCHAR"/>
+        <result property="teacherInfo" column="teacher_info" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id ="GetTeacherById" resultMap="BaseTeacher" parameterType="BigInteger">
+        SELECT * FROM teacher WHERE teacher_id = #{teacherId}
+    </select>
+
+
+</mapper>

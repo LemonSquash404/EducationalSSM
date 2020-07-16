@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.scorequery.dao.AchievementEntryDao">
+
+        <resultMap id="BaseEntryAchievementForm" type="com.scorequery.entity.EntryAchievementForm">
+            <id property="studentId" column="student_id" jdbcType="BIGINT"/>
+            <id property="courseId" column="course_id" jdbcType="BIGINT"/>
+            <result property="studentName" column="student_name" jdbcType="VARCHAR"/>
+            <result property="courseName" column="course_name" jdbcType="VARCHAR"/>
+            <result property="facultyId" column="faculty_id" jdbcType="BIGINT"/>
+            <result property="facultyName" column="faculty_name" jdbcType="VARCHAR"/>
+            <result property="classId" column="class_id" jdbcType="BIGINT"/>
+            <result property="className" column="class_name" jdbcType="VARCHAR"/>
+            <result property="achievement" column="achievement" jdbcType="VARCHAR"/>
+            <result property="semester" column="semester" jdbcType="VARCHAR"/>
+            <result property="teacherId" column="teacher_id" jdbcType="BIGINT"/>
+            <result property="teacherName" column="teacher_name" jdbcType="VARCHAR"/>
+        </resultMap>
+
+    <resultMap id="BaseStudent" type="com.scorequery.entity.Student">
+        <id property="studentId" column="student_id" jdbcType="BIGINT"/>
+        <result property="studentName" column="student_name" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="GetAchievementForm" resultMap="BaseEntryAchievementForm">
+        SELECT
+        a.faculty_id,a.class_id,a.student_id,a.student_name,a.course_id,a.achievement,a.semester,
+        b.faculty_name,c.class_name,d.course_name,e.teacher_id,e.teacher_name
+        FROM
+        ${formName} AS a
+        LEFT JOIN facultys AS b ON a.faculty_id = b.faculty_id
+        LEFT JOIN class AS c ON a.class_id = c.class_id AND a.faculty_id = c.faculty_id
+        LEFT JOIN course AS d ON a.course_id = d.course_id
+        LEFT JOIN teacher AS e ON d.teacher_id = e.teacher_id
+    <where>
+        <if test="faculty != null">
+            AND a.faculty_id = #{faculty}
+        </if>
+        <if test="classId != null">
+            AND a.class_id = #{classId}
+        </if>
+        <if test="name != null">
+            AND a.student_name = #{name}
+        </if>
+        <if test="semesters != null">
+            AND a.semester = #{semesters}
+        </if>
+        <if test="courseid != null">
+            AND a.course_id = #{courseid}
+        </if>
+    </where>
+    LIMIT ${pos},${limit};
+    </select>
+
+    <select id="GetAchievementFormName" resultType="String">
+    SELECT form_name
+    FROM achievement_form
+    WHERE 1=1
+    <if test="semesters != null">
+        AND semester = #{semesters}
+    </if>
+    </select>
+
+    <select id="SearcheStudent" resultMap="BaseStudent">
+        SELECT student_id,student_name
+        FROM student
+        WHERE faculty_id = #{facultyId}
+        AND class_id = #{classId}
+    </select>
+
+    <select id="GetStudentName" resultType="String">
+        SELECT student_name
+        FROM student
+        WHERE student_id = #{stuId}
+    </select>
+
+    <update id="ChangerAchievement" >
+        UPDATE ${formName}
+        SET achievement = #{achievement}
+        WHERE student_id = #{stuId}
+        AND faculty_id = #{facultyId}
+        AND class_id = #{classId}
+        AND course_id = #{courseId}
+    </update>
+
+    <delete id="DeletAchievement" >
+        DELETE FROM ${formName}
+        WHERE student_id = #{stuId}
+        AND faculty_id = #{facultyId}
+        AND class_id = #{classId}
+        AND course_id = #{courseId}
+    </delete>
+
+    <insert id="AddAchievement">
+        INSERT INTO ${formName}
+        (faculty_id,class_id,student_id,student_name,course_id,achievement,semester)
+        VALUES(#{facultyId},#{classId},#{stuId},#{stuName},
+        #{courseId},#{achievement},#{semester})
+    </insert>
+
+</mapper>

@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.home.dao.UserDao">
+
+
+    <resultMap id="BaseUser" type="com.home.entity.User">
+        <id property="userId" column="user_id"/>
+        <result property="name" column="user_name"/>
+        <result property="userpassword" column="user_password"/>
+    </resultMap>
+
+    <resultMap id="UserInFo" type="com.home.entity.UserInFo">
+        <result property="name" column="user_name" jdbcType="VARCHAR"/>
+        <result property="avatar" column="avatar" jdbcType="VARCHAR"/>
+        <result property="introduction" column="introduction" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <resultMap id="Router" type="com.home.entity.Router">
+        <id property="rolesId" column="roles_id" jdbcType="BIGINT"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="routertem" column="routertem" jdbcType="VARCHAR"/>
+        <result property="parent" column="parent" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <resultMap id="RouterList" type="com.home.entity.Router">
+        <result property="name" column="router_name" jdbcType="VARCHAR"/>
+        <result property="routertem" column="router_tem" jdbcType="VARCHAR"/>
+        <result property="parent" column="parent" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <resultMap id="AllRouterList" type="com.home.entity.Router">
+        <id property="rolesId" column="router_id" jdbcType="BIGINT"/>
+        <result property="name" column="router_name" jdbcType="VARCHAR"/>
+        <result property="routertem" column="router_tem" jdbcType="VARCHAR"/>
+        <result property="parent" column="parent" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id ="UserLogin" resultMap="BaseUser">
+        SELECT user_id,user_name,user_password
+        FROM user
+        WHERE user_id = #{userid}
+    </select>
+
+    <insert id="UserRegister" parameterType="com.home.entity.User">
+    INSERT INTO user(user_id,user_name,user_password)
+    VALUE(#{userId},#{username},#{userpassword})
+    </insert>
+
+    <update id="UserPasswordUpdate">
+    UPDATE user
+    SET user_password = #{password}
+    WHERE user_id = #{userid}
+    </update>
+
+    <select id="UserLoginInfo" resultMap="UserInFo">
+        SELECT user_name,role_id,avatar,introduction
+        FROM user
+        WHERE user_id = #{userid}
+    </select>
+
+   <select id="GetUserRoles" resultType="String">
+        SELECT role_id
+        FROM user
+        WHERE user_id = #{userid}
+    </select>
+
+    <select id="GetUserRouters" resultMap="Router">
+        SELECT *
+        FROM router
+        WHERE roles_id = #{rolesid}
+    </select>
+
+    <select id="GetAllRouter" resultMap="RouterList">
+        SELECT *
+        FROM routerlist
+    </select>
+
+    <select id ="AllRouter" resultMap="AllRouterList">
+        SELECT *
+        FROM routerlist
+    </select>
+
+    <select id ="GetRoleRouter" resultMap="Router">
+        SELECT *
+        FROM router
+        WHERE roles_id = #{roleid}
+    </select>
+
+    <select id ="FindRoleByName" resultType="String">
+        SELECT *
+        FROM roles
+        WHERE roles_name = #{rolename}
+    </select>
+
+
+    <delete id="DeletRole">
+    DELETE t1,
+     t2,
+     t3
+    FROM
+	roles t1
+    LEFT JOIN role_manager t2 ON t1.roles_id = t2.role_id
+    LEFT JOIN router t3 ON t1.roles_id = t3.roles_id
+    WHERE
+	t1.roles_id = #{roleid}
+    </delete>
+
+    <delete id="DeletRoleAllRouter">
+    DELETE
+    FROM
+    router
+    WHERE router.roles_id = #{roleid}
+    </delete>
+
+    <insert id="AddRoleRouter">
+        INSERT INTO router (roles_id,name,routertem,parent) VALUES (#{roleid},#{name},#{routertem},#{parent})
+    </insert>
+
+    <insert id="AddRole">
+        INSERT INTO roles (roles_name,roles_describe) VALUES (#{rolename},#{describe})
+    </insert>
+
+    <update id="UpdateUserAvatar">
+        UPDATE user SET avatar = #{avatar} WHERE user_id = #{userId}
+    </update>
+
+    <select id="FindUserAvatar">
+        SELECT avatar
+        FROM user
+        WHERE user_id = #{userId}
+    </select>
+
+</mapper>

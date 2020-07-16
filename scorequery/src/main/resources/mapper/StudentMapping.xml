@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.scorequery.dao.StudentDao">
+    <resultMap id="BaseStudent" type="com.scorequery.entity.Student">
+        <id property="studentId" column="student_id" jdbcType="BIGINT"/>
+        <result property="studentName" column="student_name" jdbcType="VARCHAR"/>
+        <result property="classId" column="class_id" jdbcType="BIGINT"/>
+        <result property="facultyId" column="faculty_id" jdbcType="BIGINT"/>
+        <collection property="StuClass" ofType="com.scorequery.entity.Class"
+                    select="com.scorequery.dao.ClassDao.GetClassById" column="{classid=class_id,facultyid=faculty_id}"/>
+        <collection property="facultys" ofType="com.scorequery.entity.Facultys"
+                    select="com.scorequery.dao.FacultysDao.GetFacultysById"
+                    column="faculty_id"/>
+    </resultMap>
+
+    <resultMap id="EasyStudent" type="com.scorequery.entity.Student">
+        <result property="classId" column="class_id" jdbcType="BIGINT"/>
+        <result property="facultyId" column="faculty_id" jdbcType="BIGINT"/>
+    </resultMap>
+
+    <resultMap id="BaseTimeTable" type="com.scorequery.entity.TimeTable">
+        <result property="courseName" column="course_name" jdbcType="VARCHAR"/>
+        <result property="startDate" column="startdate" jdbcType="DATE"/>
+        <result property="endDate" column="enddate" jdbcType="DATE"/>
+        <result property="cycle" column="cycle" jdbcType="VARCHAR"/>
+        <result property="startTime" column="starttime" jdbcType="TIME"/>
+        <result property="endTime" column="endtime" jdbcType="TIME"/>
+        <result property="lesson" column="lesson" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <select id ="GetStudentsById" resultMap="BaseStudent">
+        SELECT *
+        FROM student
+        WHERE student_id = #{stuid}
+    </select>
+
+    <select id ="GetEasyStudentById" resultType="map">
+        SELECT class_id,faculty_id
+        FROM student
+        WHERE student_id = #{stuid}
+    </select>
+
+    <select id ="GetStudentsByName" resultMap="BaseStudent">
+        SELECT *
+        FROM student
+        WHERE student_name = #{stuname}
+    </select>
+
+    <select id ="GetStudentsByClass" resultMap="BaseStudent">
+        SELECT student_id,student_name
+        FROM student
+        WHERE faculty_id = #{facultyid}
+        AND class_id = #{classid}
+    </select>
+
+    <select id ="GetStudentsByFacultyId" resultMap="BaseStudent">
+        SELECT student_id,student_name,class_id
+        FROM student
+        WHERE faculty_id = #{facultyid}
+    </select>
+
+    <select id="GetStudentTimeTable" resultMap="BaseTimeTable">
+        SELECT course_name,startdate,enddate,cycle,starttime,endtime,lesson
+        FROM class_course AS a
+        LEFT JOIN course AS b ON a.course_id = b.course_id
+        WHERE facultys_id = #{facultyId}
+        AND class_id = #{classId}
+    </select>
+</mapper>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.scorequery.dao.CourseDao">
+
+    <resultMap id="BaseCourse" type="com.scorequery.entity.Course" >
+        <id property="courseId" column="course_id" jdbcType="VARCHAR"/>
+        <result property="courseName" column="course_name" jdbcType="BIGINT"/>
+        <result property="teacherId" column="teacher_id" jdbcType="BIGINT"/>
+        <collection property="teacher" ofType="com.scorequery.entity.Teacher"
+                    select="com.scorequery.dao.TeacherDao.GetTeacherById" column="teacher_id">
+        </collection>
+
+    </resultMap>
+
+    <select id ="GetAllCourse" resultMap="BaseCourse">
+        SELECT course_id,course_name
+        FROM course
+    </select>
+
+    <select id ="GetCourseById" resultMap="BaseCourse">
+        SELECT *
+        FROM course
+        WHERE course_id = #{courseId}
+    </select>
+
+</mapper>
